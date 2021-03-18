@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .container1 {
+            width: 80%;
+            
+            border: 1px black solid;
+        }
+
+        .container{
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body> 
+    <div>채팅<span id="notify">1</span></div><br>
+<div class="container1">
+ 
+   
+    <br>
+    <div>
+        <div id="items">
+
+        </div>
+    </div>
+
+    
+    <br>
+</div>
+
+<div class="container">
+    <div style="width: 600px;">
+        <input id="username" style="width: 25%;" />
+        <input id="chat"  style="width: 60%;">
+        <button id="chatSending" onclick="button1_click();">chat</button>
+    </div>
+</div>
+
+    
+   
+       
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+
+
+    <script>
+
+        fetch("http://localhost:8080/")
+            .then(res => res.json()).then(res => {
+                console.log(res);
+
+                let items_el = document.querySelector("#items");
+
+                for (i of res) {
+                   
+                    
+                   
+                }
+
+                const eventSource = new EventSource("http://localhost:8080/sse");
+                eventSource.onmessage = event => {
+                    console.log(event.data);
+                    let item_el = document.createElement("div");
+                    item_el.innerHTML = event.data;
+                    items_el.appendChild(item_el);
+                };
+                eventSource.onerror = error => {
+                    eventSource.close();
+                };
+            });
+
+            
+
+            function button1_click() {
+                let username1=document.querySelector("#username").value;
+                let chat1=document.querySelector("#chat").value;
+
+                var data = {
+                    username: username1,
+                    chat: chat1
+                }
+                console.log(data);
+
+                $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/send",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                //dataType: "json" 
+                })
+                .done(function(result){
+                    console.log("결과" + result.username);
+                    
+                }) // ajax 통신 완료후에 정상이면 done이 가지고 있는 함수 호출
+
+                
+            }
+    </script>
+</body>
+
+</html>
